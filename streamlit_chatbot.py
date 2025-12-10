@@ -47,7 +47,16 @@ with st.sidebar:
 # ------------------------------------
 @st.cache_resource
 def load_nlp():
-    return spacy.load("en_core_web_md")
+    try:
+        return spacy.load("en_core_web_sm")
+    except Exception:
+        try:
+            from spacy.cli import download
+            download("en_core_web_sm")
+            return spacy.load("en_core_web_sm")
+        except Exception:
+            # Fallback to md if sm fails to download in some environments
+            return spacy.load("en_core_web_md")
 nlp = load_nlp()
 
 @st.cache_resource
