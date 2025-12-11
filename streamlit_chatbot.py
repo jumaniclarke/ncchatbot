@@ -10,6 +10,7 @@ from nltk.corpus import wordnet
 from spacy import displacy
 from pandas_automation import get_base
 from streamlit_google_auth import Authenticate
+import os
 # ------------------------------------
 # Page config
 # ------------------------------------
