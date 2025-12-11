@@ -20,7 +20,7 @@ st.set_page_config(page_title="Stats Chatbot — Percentage Interpretation", lay
 # Google Authentication
 # ------------------------------------
 # Initialize authentication (with optional bypass for troubleshooting/deployments)
-DISABLE_AUTH = False
+DISABLE_AUTH = True
 try:
     # Allow disabling auth via Streamlit secrets or env var
     DISABLE_AUTH = bool(st.secrets.get('DISABLE_AUTH', False)) or bool(os.environ.get('DISABLE_AUTH'))
@@ -420,3 +420,4 @@ if prompt:
     incorrect = any("❌" in m for m in fb["Content Accuracy"])
     if incorrect:
         assistant_say(f"Would you like to see an exemplar for this task?\n\n**Exemplar:** {t['expected']['text']}", t["id"])
+
