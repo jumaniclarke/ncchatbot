@@ -18,23 +18,29 @@ st.set_page_config(page_title="Stats Chatbot — Percentage Interpretation", lay
 # ------------------------------------
 # Google Authentication
 # ------------------------------------
-# Initialize authentication
-authenticator = Authenticate(
-    secret_credentials_path='google_credentials.json',
-    cookie_name='streamlit_auth_cookie',
-    cookie_key='streamlit_auth_key',
-    redirect_uri='http://localhost:8501',
-)
+# Initialize authentication (with optional bypass for troubleshooting/deployments)
+DISABLE_AUTH = False
+try:
+    # Allow disabling auth via Streamlit secrets or env var
+    DISABLE_AUTH = bool(st.secrets.get('DISABLE_AUTH', False)) or bool(os.environ.get('DISABLE_AUTH'))
+except Exception:
+    pass
 
-# Check authentication
-authenticator.check_authentification()
-
-# Show login button if not authenticated
-if not st.session_state['connected']:
-    st.title("Statistics Chatbot")
-    st.markdown("### Please sign in with your Google account to continue")
-    authenticator.login()
-    st.stop()  # Stop execution if not authenticated
+if not DISABLE_AUTH:
+    authenticator = Authenticate(
+        secret_credentials_path='google_credentials.json',
+        cookie_name='streamlit_auth_cookie',
+        cookie_key='streamlit_auth_key',
+        redirect_uri='http://localhost:8501',
+    )
+    authenticator.check_authentification()
+    if not st.session_state['connected']:
+        st.title("Statistics Chatbot")
+        st.markdown("### Please sign in with your Google account to continue")
+        authenticator.login()
+        st.stop()  # Stop execution if not authenticated
+else:
+    st.warning("Authentication temporarily disabled (DISABLE_AUTH). Do not expose sensitive data.")
 
 # Show logout button in sidebar if authenticated
 with st.sidebar:
