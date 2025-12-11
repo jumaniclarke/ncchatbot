@@ -1,4 +1,5 @@
 # streamlit_chatbot.py
+from numpy import True_
 import streamlit as st
 import spacy
 from spacy.matcher import Matcher
@@ -20,7 +21,7 @@ st.set_page_config(page_title="Stats Chatbot — Percentage Interpretation", lay
 # Google Authentication
 # ------------------------------------
 # Initialize authentication (with optional bypass for troubleshooting/deployments)
-DISABLE_AUTH = False
+DISABLE_AUTH = True
 try:
     # Allow disabling auth via Streamlit secrets or env var
     DISABLE_AUTH = bool(st.secrets.get('DISABLE_AUTH', False)) or bool(os.environ.get('DISABLE_AUTH'))
