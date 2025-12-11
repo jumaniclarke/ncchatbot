@@ -159,9 +159,21 @@ class Authenticate:
         # 1) Prefer Streamlit secrets when available (for Cloud)
         try:
             secrets_obj = st.secrets  # Access may raise StreamlitSecretNotFoundError locally
+            # Support both flat and nested secrets structures
             sid = secrets_obj.get("GOOGLE_CLIENT_ID")
             ssecret = secrets_obj.get("GOOGLE_CLIENT_SECRET")
-            sredirect = secrets_obj.get("REDIRECT_URI") or self.redirect_uri
+            sredirect = secrets_obj.get("REDIRECT_URI")
+            # Nested: [auth.google] and [auth]
+            try:
+                if not sid:
+                    sid = secrets_obj.get("auth", {}).get("google", {}).get("GOOGLE_CLIENT_ID")
+                if not ssecret:
+                    ssecret = secrets_obj.get("auth", {}).get("google", {}).get("GOOGLE_CLIENT_SECRET")
+                if not sredirect:
+                    sredirect = secrets_obj.get("auth", {}).get("REDIRECT_URI")
+            except Exception:
+                pass
+            sredirect = sredirect or self.redirect_uri
             sauth = secrets_obj.get("AUTH_URI") or GOOGLE_AUTH_ENDPOINT
             stoken = secrets_obj.get("TOKEN_URI") or GOOGLE_TOKEN_ENDPOINT
             if sid and ssecret and sredirect:
